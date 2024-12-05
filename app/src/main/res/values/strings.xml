@@ -2,4 +2,6 @@
     <string name="app_name">TracTion</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_sign_up">SIgnUpActivity</string>
+    <string name="title_activity_forget_password">ForgetPassword</string>
+    <string name="title_activity_my_app_navigation">MyAppNavigation</string>
 </resources>

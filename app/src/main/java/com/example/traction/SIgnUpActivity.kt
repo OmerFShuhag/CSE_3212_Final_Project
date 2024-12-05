@@ -43,21 +43,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.traction.ui.theme.TracTionTheme
 
-class SIgnUpActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
 
-        }
-    }
-}
-
-@Preview(showBackground = true)
 @Composable
-fun SIgnUp()
+fun SIgnUpActivity(modifier: Modifier, navController: NavController, authViewModel: AuthViewModel)
 {
     var email by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "344455764905",
+    "project_id": "traction-11db9",
+    "storage_bucket": "traction-11db9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:344455764905:android:f26e8f8eb3113abb14c2b8",
+        "android_client_info": {
+          "package_name": "com.example.traction"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAZ3BnaGTb89x8i2Z8M0ylIx09iwu3pMc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

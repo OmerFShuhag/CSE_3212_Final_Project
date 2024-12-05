@@ -35,24 +35,15 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.navigation.NavController
 import com.example.traction.ui.theme.TracTionTheme
 
 
 
-class LoginActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            LoginScreen();
-        }
-    }
-}
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
+
 @Composable
-fun LoginScreen(){
+fun LoginActivity(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel){
     var email by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
     var passwordVisible by remember { mutableStateOf(false) }
