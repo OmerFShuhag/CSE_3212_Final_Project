@@ -13,6 +13,19 @@
         android:theme="@style/Theme.TracTion"
         tools:targetApi="31">
         <activity
+            android:name=".SIgnUpActivity"
+            android:exported="false"
+            android:label="@string/title_activity_sign_up"
+            android:theme="@style/Theme.TracTion" />
+        <activity
+            android:name=".LogIn"
+            android:exported="false" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false"
+            android:label="@string/title_activity_login"
+            android:theme="@style/Theme.TracTion" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
