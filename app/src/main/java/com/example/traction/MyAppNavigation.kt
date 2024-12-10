@@ -25,10 +25,10 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel)
             LoginActivity(modifier, navController, authViewModel)
         }
         composable("signup"){
-            LoginActivity(modifier, navController, authViewModel)
+            SIgnUpActivity(modifier, navController, authViewModel)
         }
         composable("homepage"){
-            LoginActivity(modifier, navController, authViewModel)
+            HomePage(modifier, navController, authViewModel)
         }
     })
 }

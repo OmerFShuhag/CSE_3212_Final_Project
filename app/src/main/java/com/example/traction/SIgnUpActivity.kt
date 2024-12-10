@@ -1,6 +1,7 @@
 package com.example.traction
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -28,7 +29,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
@@ -50,11 +54,24 @@ import com.example.traction.ui.theme.TracTionTheme
 @Composable
 fun SIgnUpActivity(modifier: Modifier, navController: NavController, authViewModel: AuthViewModel)
 {
-    var email by remember { mutableStateOf(TextFieldValue("")) }
-    var password by remember { mutableStateOf(TextFieldValue("")) }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf(TextFieldValue("")) }
     var confirmPassword by remember { mutableStateOf("") }
+
+    val authState = authViewModel.authState.observeAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(authState.value) {
+        when(authState.value){
+            is AuthState.Authenticated -> {
+                navController.navigate("homepage")
+            }
+            is AuthState.Error -> Toast.makeText(context, (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT).show()
+            else -> Unit
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -150,14 +167,18 @@ fun SIgnUpActivity(modifier: Modifier, navController: NavController, authViewMod
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = {},
+                onClick = {
+                   authViewModel.signup(email, password)
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Sign Up")
             }
             Spacer(modifier = Modifier.height(16.dp))
             TextButton(
-                onClick = {}
+                onClick = {
+                    navController.navigate("login")
+                }
             ) {
                 Text(text = "Back To Login")
             }

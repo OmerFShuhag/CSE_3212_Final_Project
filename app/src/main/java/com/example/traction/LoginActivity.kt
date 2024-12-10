@@ -1,6 +1,7 @@
 package com.example.traction
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -31,8 +32,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.navigation.NavController
@@ -44,9 +48,23 @@ import com.example.traction.ui.theme.TracTionTheme
 
 @Composable
 fun LoginActivity(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel){
-    var email by remember { mutableStateOf(TextFieldValue("")) }
-    var password by remember { mutableStateOf(TextFieldValue("")) }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+
+    val authState = authViewModel.authState.observeAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(authState.value) {
+        when(authState.value){
+            is AuthState.Authenticated -> {
+                navController.navigate("homepage")
+            }
+            is AuthState.Error -> Toast.makeText(context, (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT).show()
+            else -> Unit
+        }
+    }
+
 
     Box(
         modifier = Modifier
@@ -113,7 +131,9 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavController, a
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = {},
+                onClick = {
+                    authViewModel.login(email, password)
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Log In")
@@ -131,7 +151,9 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavController, a
                 .padding(bottom = 16.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            TextButton(onClick = {}) {
+            TextButton(onClick = {
+                navController.navigate("signup")
+            }) {
                 Text(text = "Create A New Account")
             }
         }
