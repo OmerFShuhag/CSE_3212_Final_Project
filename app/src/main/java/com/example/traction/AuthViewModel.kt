@@ -18,11 +18,14 @@ class AuthViewModel : ViewModel(){
 
 
     fun checkAuthStatus(){
-        if(auth.currentUser == null){
+        val currentUser = auth.currentUser
+
+        if(currentUser == null){
             _authState.value = AuthState.Unauthenticated
         }
         else{
-            _authState.value = AuthState.Authenticated
+            if(currentUser.isEmailVerified)_authState.value = AuthState.Authenticated
+            _authState.value = AuthState.EmailUnverfied
         }
     }
 
@@ -36,7 +39,14 @@ class AuthViewModel : ViewModel(){
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener{task->
                 if (task.isSuccessful){
-                    _authState.value = AuthState.Authenticated
+                    val user = auth.currentUser
+
+                    if(user?.isEmailVerified == true){
+                        _authState.value = AuthState.Authenticated
+                    }
+                    else{
+                        _authState.value = AuthState.EmailUnverfied
+                    }
                 }
                 else{
                     _authState.value = AuthState.Error(task.exception?.message?:"Something went wrong")
@@ -51,15 +61,35 @@ class AuthViewModel : ViewModel(){
         }
 
         _authState.value = AuthState.Loading
+
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener{task->
                 if (task.isSuccessful){
-                    _authState.value = AuthState.Authenticated
+                    val user = auth.currentUser
+                    user?.sendEmailVerification()
+                        ?.addOnCompleteListener{emailTask ->
+                            if (emailTask.isSuccessful)_authState.value = AuthState.EmailSent
+                            else _authState.value = AuthState.Error("Failed to Sent Email")
+                        }
                 }
                 else{
                     _authState.value = AuthState.Error(task.exception?.message?:"Something went wrong")
                 }
             }
+    }
+
+    fun resendEmail(){
+        val user = auth.currentUser
+        if(user != null && !user.isEmailVerified){
+            user.sendEmailVerification()
+                .addOnCompleteListener{task ->
+                    if(task.isSuccessful){
+                        _authState.value = AuthState.EmailSent
+                    }else{
+                        _authState.value = AuthState.Error("Failed TO Send Email")
+                    }
+                }
+        }
     }
 
     fun signout(){
@@ -72,5 +102,7 @@ sealed class AuthState{
     object Authenticated : AuthState()
     object Unauthenticated : AuthState()
     object Loading : AuthState()
+    object EmailUnverfied : AuthState()
+    object EmailSent : AuthState()
     data class Error(val message : String) : AuthState()
 }

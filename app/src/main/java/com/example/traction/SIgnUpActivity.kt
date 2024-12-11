@@ -57,8 +57,14 @@ fun SIgnUpActivity(modifier: Modifier, navController: NavController, authViewMod
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-    var name by remember { mutableStateOf(TextFieldValue("")) }
+    var name by remember { mutableStateOf(("")) }
     var confirmPassword by remember { mutableStateOf("") }
+
+    var emailError by remember { mutableStateOf<String?>(null) }
+    var nameError by remember { mutableStateOf<String?>(null) }
+    var passwordError by remember { mutableStateOf<String?>(null) }
+    var confirmPassError by remember { mutableStateOf<String?>(null) }
+
 
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
@@ -68,6 +74,10 @@ fun SIgnUpActivity(modifier: Modifier, navController: NavController, authViewMod
             is AuthState.Authenticated -> {
                 navController.navigate("homepage")
             }
+            is AuthState.EmailSent -> {
+                navController.navigate("login")
+                Toast.makeText(context, "Verificaiton Mail Sent", Toast.LENGTH_SHORT).show()}
+            is AuthState.EmailUnverfied -> Toast.makeText(context, "Mail not Varified", Toast.LENGTH_SHORT).show()
             is AuthState.Error -> Toast.makeText(context, (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT).show()
             else -> Unit
         }
@@ -93,20 +103,29 @@ fun SIgnUpActivity(modifier: Modifier, navController: NavController, authViewMod
 
             OutlinedTextField(
                 value = name,
-                onValueChange = { name = it },
+                onValueChange = {
+                    name = it
+                    nameError = Validator.validateName(it)
+                    },
                 label = { Text("Name") },
+                isError = nameError != null,
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedLabelColor = Color.Green,
                     unfocusedLabelColor = Color.Red
                 )
             )
+            nameError?.let { Text(it, color = Color.Red) }
 
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = {
+                    email = it
+                    emailError = Validator.validateEmail(it)
+                },
                 label = { Text("Email") },
+                isError = emailError != null,
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedLabelColor = Color.Green,
@@ -115,12 +134,16 @@ fun SIgnUpActivity(modifier: Modifier, navController: NavController, authViewMod
                     unfocusedBorderColor = Color.DarkGray
                 )
             )
+            emailError?.let { Text(it, color = Color.Red) }
 
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { password = it
+                                passwordError = Validator.validatePassword(it)
+                                },
                 label = { Text("Password") },
+                isError = passwordError != null,
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -140,12 +163,16 @@ fun SIgnUpActivity(modifier: Modifier, navController: NavController, authViewMod
                 }
                 //enabled = false
             )
+            passwordError?.let { Text(it, color = Color.Red) }
 
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = confirmPassword,
-                onValueChange = { confirmPassword = it },
+                onValueChange = { confirmPassword = it
+                                confirmPassError = Validator.validateConfirmPassword(it, password)
+                                },
                 label = { Text("Confirm Password") },
+                isError = confirmPassError != null,
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -165,10 +192,17 @@ fun SIgnUpActivity(modifier: Modifier, navController: NavController, authViewMod
                 }
                 //enabled = false
             )
+            confirmPassError?.let { Text(it, color = Color.Red) }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                   authViewModel.signup(email, password)
+                   if(nameError == null
+                       && emailError == null
+                       && passwordError == null
+                       && confirmPassError == null)authViewModel.signup(email, password)
+                    else{
+                       Toast.makeText(context, "Password Not match", Toast.LENGTH_SHORT).show()
+                   }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

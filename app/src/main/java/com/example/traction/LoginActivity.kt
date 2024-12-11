@@ -52,6 +52,9 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavController, a
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
+    var emailError by remember { mutableStateOf<String?>(null) }
+    var passwordError by remember { mutableStateOf<String?>(null) }
+
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
 
@@ -91,8 +94,11 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavController, a
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = { email = it
+                                emailError = Validator.validateEmail(it)
+                                },
                 label = { Text("Email") },
+                isError = emailError != null,
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedLabelColor = Color.Red,
@@ -101,11 +107,14 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavController, a
                     unfocusedBorderColor = Color.Green
                 )
             )
+            emailError?.let { Text(it, color = Color.Red) }
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { password = it
+                                passwordError = Validator.validatePassword(it)},
                 label = { Text("Password") },
+                isError = passwordError != null,
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -129,6 +138,7 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavController, a
                 }
                 //enabled = false
             )
+            passwordError?.let { Text(it, color = Color.Red) }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
