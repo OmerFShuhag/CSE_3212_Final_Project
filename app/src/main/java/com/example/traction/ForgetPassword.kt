@@ -26,21 +26,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.traction.ui.theme.TracTionTheme
 
-class ForgetPassword : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            Forgetpass()
-        }
-    }
-}
-
-@Preview(showBackground = true)
 @Composable
-fun Forgetpass() {
+fun Forgetpass(modifier: Modifier, navController: NavController, authViewModel: AuthViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -69,7 +59,9 @@ fun Forgetpass() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(onClick = {}) {
+        TextButton(onClick = {
+            navController.navigate("login")
+        }) {
             Text("Back to Login")
         }
     }

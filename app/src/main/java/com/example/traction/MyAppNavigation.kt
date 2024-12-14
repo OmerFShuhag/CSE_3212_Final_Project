@@ -30,5 +30,8 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel)
         composable("homepage"){
             HomePage(modifier, navController, authViewModel)
         }
+        composable("forget_pass"){
+            Forgetpass(modifier, navController, authViewModel)
+        }
     })
 }

@@ -150,7 +150,9 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavController, a
             }
             Spacer(modifier = Modifier.height(16.dp))
             TextButton(
-                onClick = {}
+                onClick = {
+                    navController.navigate("forget_pass")
+                }
             ) {
                 Text(text = "Forget Password")
             }
