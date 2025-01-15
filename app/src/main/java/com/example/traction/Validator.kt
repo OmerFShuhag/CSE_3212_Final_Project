@@ -4,7 +4,8 @@ class Validator {
 
     companion object{
         private val email_regex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}\$")
-        private val password_regex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{6,20}$")
+        //private val password_regex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{6,20}$")
+        private val password_regex = Regex("^.{8}$")
         private val name_regex = Regex("^[A-Za-z]{2,}(\\s[A-Za-z]{2,})?\$")
 
         fun validateEmail(email: String): String?{

@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -18,11 +19,16 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         val authViewModel : AuthViewModel by viewModels()
+        val databaseViewModel : DatabaseViewModel by viewModels()
+
         setContent {
             Scaffold {
                 innerpadding ->
-                MyAppNavigation(modifier = Modifier.padding(innerpadding), authViewModel = authViewModel)
+                MyAppNavigation(modifier = Modifier.padding(innerpadding), authViewModel = authViewModel, databaseViewModel = databaseViewModel)
             }
         }
     }
 }
+
+
+

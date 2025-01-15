@@ -5,9 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AuthViewModel : ViewModel(){
     private val auth : FirebaseAuth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
     private val _authState = MutableLiveData<AuthState>()
     val authState: LiveData<AuthState> = _authState
@@ -30,6 +32,10 @@ class AuthViewModel : ViewModel(){
     }
 
     fun login(email: String, password: String){
+        if(email.isEmpty() || password.isEmpty()){
+            _authState.value = AuthState.Error("Email or Password can not be Empty")
+            return
+        }
 
         _authState.value = AuthState.Loading
         auth.signInWithEmailAndPassword(email, password)
@@ -51,6 +57,10 @@ class AuthViewModel : ViewModel(){
     }
 
     fun signup(email: String, password: String){
+        if(email.isEmpty() || password.isEmpty()){
+            _authState.value = AuthState.Error("Email or Password can not be Empty")
+            return
+        }
 
         _authState.value = AuthState.Loading
 
@@ -86,6 +96,7 @@ class AuthViewModel : ViewModel(){
 
     fun signout(){
         auth.signOut()
+        FirebaseAuth.getInstance().signOut()
         _authState.value = AuthState.Unauthenticated
     }
 }

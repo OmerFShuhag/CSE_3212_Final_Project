@@ -41,13 +41,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.navigation.NavController
 import com.example.traction.ui.theme.TracTionTheme
-
-
-
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 @Composable
-fun LoginActivity(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel){
+fun LoginActivity(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    authViewModel: AuthViewModel,
+    databaseViewModel: DatabaseViewModel
+){
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -58,10 +63,27 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavController, a
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
 
+
     LaunchedEffect(authState.value) {
-        when(authState.value){
+        when(val state = authState.value){
             is AuthState.Authenticated -> {
-                navController.navigate("homepage")
+                val userId = FirebaseAuth.getInstance().currentUser
+                val db = FirebaseFirestore.getInstance()
+
+                userId?.let{
+                    db.collection("user").document(userId.uid).get()
+                        .addOnSuccessListener{ document ->
+                            if (document.exists()){
+                                navController.navigate("homepage")
+                            }
+                            else{
+                                navController.navigate("profile_setup")
+                            }
+                        }
+
+                }
+
+
             }
             is AuthState.Error -> Toast.makeText(context, (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT).show()
             else -> Unit
@@ -76,13 +98,13 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavController, a
             .background(color = Color.White)
 
     ) {
-        Image(
-            painter = painterResource(R.drawable.a7),
-            contentDescription = null,
-            contentScale = ContentScale.Fit,
-            modifier = Modifier.fillMaxSize()
-                .alpha(0.5f)
-        )
+//        Image(
+//            painter = painterResource(R.drawable.a7),
+//            contentDescription = null,
+//            contentScale = ContentScale.Fit,
+//            modifier = Modifier.fillMaxSize()
+//                .alpha(0.5f)
+//        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -160,7 +182,7 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavController, a
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp),
+                .padding(bottom = 100.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             TextButton(onClick = {
