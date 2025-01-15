@@ -21,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.traction.ui.theme.TracTionTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun MyAppNavigation(
@@ -30,31 +31,35 @@ fun MyAppNavigation(
 ) {
     var navController = rememberNavController()
     val authState by authViewModel.authState.observeAsState()
-//    val startDestination = when(authState.value){
-//        is AuthState.Authenticated -> "homepage"
-//        else -> "login"
-//    }
+    val startDestination = when(authState){
+        is AuthState.Authenticated -> "homepage"
+        else -> "login"
+    }
+
 
     LaunchedEffect(authState) {
-        // Check the authState and navigate to the appropriate screen
+
         when (authState) {
             is AuthState.Authenticated -> {
                 navController.navigate("homepage") {
-                    // Pop up to login so user cannot go back to the login screen
-                    popUpTo("login") { inclusive = true }
+
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
                 }
             }
             is AuthState.Unauthenticated -> {
-                navController.navigate("login") {
-                    // Prevent going back to login if user is already logged out
-                    popUpTo("login") { inclusive = true }
+                if(navController.currentDestination?.route != "login"){
+                    navController.navigate("login"){
+                        popUpTo(0){inclusive = true}
+                        launchSingleTop = true
+                    }
                 }
             }
             else -> Unit
         }
     }
 
-    NavHost(navController = navController, startDestination = "login"){
+    NavHost(navController = navController, startDestination = startDestination){
         composable("login"){
             LoginActivity(
                 modifier, 

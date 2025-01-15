@@ -16,6 +16,15 @@ class AuthViewModel : ViewModel(){
 
     init {
         checkAuthStatus()
+
+        auth.addAuthStateListener { firebaseAuth ->
+            val user = firebaseAuth.currentUser
+            when{
+                user == null -> _authState.value = AuthState.Unauthenticated
+                user.isEmailVerified -> _authState.value = AuthState.Authenticated
+                else -> _authState.value = AuthState.EmailUnverfied
+            }
+        }
     }
 
 
