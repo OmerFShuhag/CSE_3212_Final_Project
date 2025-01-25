@@ -1,33 +1,23 @@
 package com.example.traction
 
+import AddStudent
 import HomePage
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import StudentViewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.example.traction.ui.theme.TracTionTheme
-import kotlinx.coroutines.launch
 
 @Composable
 fun MyAppNavigation(
     modifier: Modifier = Modifier,
     authViewModel: AuthViewModel,
-    databaseViewModel: DatabaseViewModel
+    databaseViewModel: DatabaseViewModel,
+    studentViewModel: StudentViewModel
 ) {
     var navController = rememberNavController()
     val authState by authViewModel.authState.observeAsState()
@@ -76,7 +66,11 @@ fun MyAppNavigation(
             )
         }
         composable("homepage"){
-            HomePage(modifier, navController, authViewModel, databaseViewModel)
+            HomePage(modifier,
+                navController,
+                authViewModel,
+                databaseViewModel,
+                studentViewModel)
         }
         composable("forget_pass"){
             Forgetpass(modifier, navController, authViewModel)
@@ -84,7 +78,12 @@ fun MyAppNavigation(
         composable(
             "profile_setup"
         ){
-            ProfileSetup(databaseViewModel, navController)
+            ProfileSetup(
+                databaseViewModel, navController
+            )
+        }
+        composable("add_student"){
+            AddStudent(navController,studentViewModel)
         }
 
     }

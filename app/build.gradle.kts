@@ -80,6 +80,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("com.google.accompanist:accompanist-coil:0.15.0")
+
+
+
     //implementation(group = "com.example.android", name = "app-magic", version = "12.3")
 
 }

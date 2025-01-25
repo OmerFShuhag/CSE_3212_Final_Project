@@ -1,5 +1,6 @@
 package com.example.traction
 
+import StudentViewModel
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -8,10 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,11 +17,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val authViewModel : AuthViewModel by viewModels()
         val databaseViewModel : DatabaseViewModel by viewModels()
+        val studentViewModel : StudentViewModel by viewModels()
 
         setContent {
             Scaffold {
                 innerpadding ->
-                MyAppNavigation(modifier = Modifier.padding(innerpadding), authViewModel = authViewModel, databaseViewModel = databaseViewModel)
+                MyAppNavigation(modifier = Modifier.padding(innerpadding),
+                    authViewModel = authViewModel,
+                    databaseViewModel = databaseViewModel,
+                    studentViewModel = studentViewModel)
             }
         }
     }

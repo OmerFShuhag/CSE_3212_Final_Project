@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class DatabaseViewModel : ViewModel(){
+open class DatabaseViewModel : ViewModel(){
 
     private val db = FirebaseFirestore.getInstance()
 
