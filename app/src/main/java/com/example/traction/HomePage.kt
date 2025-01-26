@@ -24,8 +24,8 @@ import com.example.traction.User
 import com.example.traction.student.Student
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+//import java.time.LocalDate
+//import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,9 +43,9 @@ fun HomePage(modifier: Modifier,
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val Scope = rememberCoroutineScope()
 
-    val currentDate = LocalDate.now()
-    val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("MMMM dd, yyyy"))
-    val currentDay = currentDate.dayOfWeek.toString().capitalize()
+//    val currentDate = LocalDate.now()
+//    val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("MMMM dd, yyyy"))
+//    val currentDay = currentDate.dayOfWeek.toString().capitalize()
 
     LaunchedEffect(authState.value) {
         when (authState.value) {
@@ -106,13 +106,13 @@ fun HomePage(modifier: Modifier,
                     .fillMaxSize()
                     .padding(padding),
             ) {
-                Text(
-                    text = "$formattedDate($currentDate)",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
+//                Text(
+//                    text = "$formattedDate($currentDate)",
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    modifier = Modifier
+//                        .padding(16.dp)
+//                        .align(Alignment.CenterHorizontally)
+//                )
                 Spacer(modifier = Modifier.height(16.dp))
 
                 LazyColumn (
@@ -122,6 +122,7 @@ fun HomePage(modifier: Modifier,
                 ){
                     items(students.value){ student ->
                         StudentCard(student = student){
+                            navController.navigate("student_detail/${student.id}")
 
                         }
                     }

@@ -3,15 +3,23 @@ package com.example.traction
 import AddStudent
 import HomePage
 import StudentViewModel
+import android.os.Build
+//import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.traction.student.AttendanceScreen
+import com.example.traction.student.StudentDetail
+import com.example.traction.student.editStudent
 
+//@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MyAppNavigation(
     modifier: Modifier = Modifier,
@@ -84,6 +92,27 @@ fun MyAppNavigation(
         }
         composable("add_student"){
             AddStudent(navController,studentViewModel)
+        }
+        composable(
+            "student_detail/{studentId}",
+            //arguments = listOf(navArgument("studentId"){type = NavType.StringType})
+        ){backStackEntry ->
+            val studentId = backStackEntry.arguments?.getString("studentId")?: return@composable
+            StudentDetail(studentId,studentViewModel,navController)
+
+        }
+        composable("edit_student/{studentId}"){backStackEntry ->
+            val studentId = backStackEntry.arguments?.getString("studentId") ?: ""
+            editStudent(studentId, studentViewModel, navController)
+        }
+
+        composable("attendance/{studentId}") { backStackEntry ->
+            val studentId = backStackEntry.arguments?.getString("studentId") ?: ""
+            AttendanceScreen(
+                navController = navController,
+                studentViewModel = studentViewModel,
+                studentId = studentId
+            )
         }
 
     }

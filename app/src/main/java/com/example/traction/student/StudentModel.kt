@@ -9,5 +9,6 @@ data class Student(
     val phoneNumber: String = "",
     val salary: String = "",
     val teachingTime: String = "",
-    val teachingDays: List<String> = emptyList()
+    val teachingDays: List<String> = emptyList(),
+    val attendance: List<String> = emptyList()
 )

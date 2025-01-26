@@ -1,19 +1,24 @@
 package com.example.traction
 
 import StudentViewModel
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+//import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import com.google.firebase.FirebaseApp
 
 class MainActivity : AppCompatActivity() {
+    //@RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        FirebaseApp.initializeApp(this)
         setContentView(R.layout.activity_main)
         val authViewModel : AuthViewModel by viewModels()
         val databaseViewModel : DatabaseViewModel by viewModels()

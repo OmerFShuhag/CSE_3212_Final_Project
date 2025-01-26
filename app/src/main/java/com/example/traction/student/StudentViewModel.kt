@@ -1,3 +1,4 @@
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,21 +15,21 @@ class StudentViewModel : ViewModel() {
 
     private fun userCollectionPath(userId: String): String = "user/$userId/students"
 
-    // LiveData for observing student list
+
     private val _students = MutableLiveData<List<Student>>()
     val students: LiveData<List<Student>> get() = _students
 
-    // LiveData for observing a single student
+
     private val _selectedStudent = MutableLiveData<Student?>()
     val selectedStudent: LiveData<Student?> get() = _selectedStudent
 
-    // LiveData for error messages
+
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
     private val userId = auth.currentUser?.uid
 
-    // **1. Add Student**
+
     fun addStudent(student: Student) {
         val studentCollection = firestore.collection(userCollectionPath(userId.toString()))
         studentCollection.document(student.id)
@@ -43,7 +44,6 @@ class StudentViewModel : ViewModel() {
             }
     }
 
-    // **2. Fetch All Students**
     fun fetchStudents() {
         val studentCollection = firestore.collection(userCollectionPath(userId.toString()))
         studentCollection.get()
@@ -56,7 +56,6 @@ class StudentViewModel : ViewModel() {
             }
     }
 
-    // **3. Fetch Single Student**
     fun fetchStudentById(studentId: String) {
         val studentDocument = firestore.collection(userCollectionPath(userId.toString())).document(studentId)
         studentDocument.get()
@@ -68,25 +67,24 @@ class StudentViewModel : ViewModel() {
             }
     }
 
-    // **4. Update Student**
-    fun updateStudent(student: Student) {
-        val studentDocument = firestore.collection(userCollectionPath(userId.toString())).document(student.id)
-        studentDocument.set(student)
+
+    fun updateStudent(student: Student, studentId: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("user").document(userId.toString())
+            .collection("students").document(studentId)
+            .set(student)
             .addOnSuccessListener {
-                // You could trigger a reload of students here
-                fetchStudents()
+                Log.d("Update", "Student updated successfully")
             }
-            .addOnFailureListener { exception ->
-                _errorMessage.value = "Failed to update student: ${exception.message}"
+            .addOnFailureListener { e ->
+                Log.e("Update", "Error updating student: ${e.message}", e)
             }
     }
 
-    // **5. Delete Student**
-    fun deleteStudent(userId: String, studentId: String) {
-        val studentDocument = firestore.collection(userCollectionPath(userId)).document(studentId)
+    fun deleteStudent(studentId: String) {
+        val studentDocument = firestore.collection(userCollectionPath(userId.toString())).document(studentId)
         studentDocument.delete()
             .addOnSuccessListener {
-                // You could trigger a reload of students here
                 fetchStudents()
             }
             .addOnFailureListener { exception ->
@@ -94,8 +92,53 @@ class StudentViewModel : ViewModel() {
             }
     }
 
-    // **6. Clear Error Message**
     fun clearError() {
         _errorMessage.value = null
     }
+
+    fun markAttendance(studentId: String) {
+        val attendanceDate = getCurrentDate()
+
+        val studentRef = firestore.collection(userCollectionPath(userId.toString()))
+            .document(studentId)
+
+        studentRef.get().addOnSuccessListener { documentSnapshot ->
+            val student = documentSnapshot.toObject<Student>()
+            if (student != null) {
+                // Check if attendance for today is already marked
+                if (!student.attendance.contains(attendanceDate)) {
+                    val updatedAttendance = student.attendance + attendanceDate
+                    studentRef.update("attendance", updatedAttendance)
+                        .addOnSuccessListener {
+                            Log.d("Attendance", "Attendance marked for ${student.name} on $attendanceDate")
+                        }
+                        .addOnFailureListener { exception ->
+                            _errorMessage.value = "Failed to mark attendance: ${exception.message}"
+                        }
+                }
+            }
+        }
+    }
+
+    private fun getCurrentDate(): String {
+        val format = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+        return format.format(java.util.Date())  // Return the current date
+    }
+
+    fun fetchAttendance(studentId: String) {
+        val studentRef = firestore.collection(userCollectionPath(userId.toString()))
+            .document(studentId)
+
+        studentRef.get().addOnSuccessListener { documentSnapshot ->
+            val student = documentSnapshot.toObject<Student>()
+            if (student != null) {
+                _selectedStudent.value = student
+                Log.d("Attendance", "Attendance for ${student.name}: ${student.attendance}")
+            }
+        }.addOnFailureListener { exception ->
+            _errorMessage.value = "Failed to fetch attendance: ${exception.message}"
+        }
+    }
+
+
 }

@@ -81,6 +81,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("com.google.accompanist:accompanist-coil:0.15.0")
+    implementation ("com.google.android.gms:play-services-auth:19.2.0")
 
 
 
