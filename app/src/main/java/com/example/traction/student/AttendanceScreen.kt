@@ -58,7 +58,7 @@ fun AttendanceScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    studentViewModel.markAttendance(studentId, context)  // Call the mark attendance function
+                    studentViewModel.markAttendance(studentId, context)
                 },
                 containerColor = MaterialTheme.colorScheme.primary
             ) {

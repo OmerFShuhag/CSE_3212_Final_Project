@@ -96,7 +96,7 @@ fun StudentDetail(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate("edit_student/${studentId}") // Navigate to EditStudentPage
+                    navController.navigate("edit_student/${studentId}")
                 },
                 containerColor = DeepTeal
             ) {
@@ -177,9 +177,9 @@ fun StudentDetail(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        studentViewModel.deleteStudent(studentId) // Call the delete function
+                        studentViewModel.deleteStudent(studentId)
                         showDeleteDialog = false
-                        navController.popBackStack() // Navigate back after deletion
+                        navController.popBackStack()
                     }
                 ) {
                     Text("OK")
