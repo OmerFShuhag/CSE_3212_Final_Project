@@ -12,10 +12,13 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.traction.ui.theme.DeepTeal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,6 +29,7 @@ fun AttendanceScreen(
 ) {
     val student by studentViewModel.selectedStudent.observeAsState()
     val attendanceList = student?.attendance ?: emptyList()
+    val context = LocalContext.current
 
     LaunchedEffect(studentId) {
         studentViewModel.fetchStudentById(studentId)
@@ -35,19 +39,26 @@ fun AttendanceScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Attendance for ${student?.name ?: "Loading..."}")
+                    Text("Attendance for ${student?.name ?: "Loading..."}",
+                        color = Color.White
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back",
+                            tint = Color.White)
                     }
-                }
+                },
+
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = DeepTeal
+                ),
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    studentViewModel.markAttendance(studentId)  // Call the mark attendance function
+                    studentViewModel.markAttendance(studentId, context)  // Call the mark attendance function
                 },
                 containerColor = MaterialTheme.colorScheme.primary
             ) {

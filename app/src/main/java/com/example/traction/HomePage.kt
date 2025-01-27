@@ -1,6 +1,7 @@
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -22,8 +24,20 @@ import com.example.traction.AuthViewModel
 import com.example.traction.DatabaseViewModel
 import com.example.traction.User
 import com.example.traction.student.Student
+import com.example.traction.ui.theme.DeepTeal
+import com.example.traction.ui.theme.SoftTeal
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
+import androidx.compose.material3.CardDefaults
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Brush.Companion.verticalGradient
+import androidx.compose.ui.res.painterResource
+import com.example.traction.R
+//import androidx.compose.ui.text.style.TextForegroundStyle.Unspecified.brush
+import com.example.traction.ui.theme.CoralRed
+import com.example.traction.ui.theme.LightTeal
+import com.example.traction.ui.theme.MutedTeal
+
 //import java.time.LocalDate
 //import java.time.format.DateTimeFormatter
 
@@ -43,9 +57,6 @@ fun HomePage(modifier: Modifier,
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val Scope = rememberCoroutineScope()
 
-//    val currentDate = LocalDate.now()
-//    val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("MMMM dd, yyyy"))
-//    val currentDay = currentDate.dayOfWeek.toString().capitalize()
 
     LaunchedEffect(authState.value) {
         when (authState.value) {
@@ -69,12 +80,22 @@ fun HomePage(modifier: Modifier,
         drawerContent = {
             DrawerContent(user = user.value, authViewModel = authViewModel)
         },
-        modifier = Modifier.systemBarsPadding()
+        modifier = Modifier.systemBarsPadding(),
     ) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Homepage", style = MaterialTheme.typography.titleLarge) },
+                    title = {
+                        Column{
+                            Text("Homepage", style = MaterialTheme.typography.titleLarge,
+                                color = Color.White)
+                            Text(
+                                "Welcome back! Manage your students here.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White.copy(alpha = 0.7f)
+                            )
+                            }
+                            },
                     navigationIcon = {
                         IconButton(onClick = {
                             Scope.launch { drawerState.open() }
@@ -83,8 +104,7 @@ fun HomePage(modifier: Modifier,
                         }
                     },
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        containerColor = DeepTeal
                     ),
 
                 )
@@ -92,43 +112,64 @@ fun HomePage(modifier: Modifier,
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
-                        //onAddStudentClick()
                         navController.navigate("add_student")
                         },
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = DeepTeal
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Student")
+                    Icon(painter = painterResource(id = R.drawable.user),
+                        contentDescription = "Add Student",
+                        modifier = Modifier.size(30.dp),
+                        tint = Color.Unspecified)
                 }
             }
-        ) { padding ->
-            Column (
+        )
+        { innerpadding ->
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding),
-            ) {
-//                Text(
-//                    text = "$formattedDate($currentDate)",
-//                    style = MaterialTheme.typography.bodyMedium,
-//                    modifier = Modifier
-//                        .padding(16.dp)
-//                        .align(Alignment.CenterHorizontally)
-//                )
-                Spacer(modifier = Modifier.height(16.dp))
+                    .padding(innerpadding)
+                    .background(brush = Brush.verticalGradient(colors = listOf(LightTeal, SoftTeal))),
+                contentAlignment = Alignment.TopCenter
+            ){
+                Column (
+                    modifier = Modifier
+                        .fillMaxSize(),
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                LazyColumn (
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ){
-                    items(students.value){ student ->
-                        StudentCard(student = student){
-                            navController.navigate("student_detail/${student.id}")
-
+                    if (students.value.isEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                "No students found. Click the + button to add a student.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                            )
                         }
                     }
-                }
 
+                    else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(students.value) { student ->
+                                StudentCard(student = student) {
+                                    navController.navigate("student_detail/${student.id}")
+
+                                }
+                            }
+                        }
+                    }
+
+                }
             }
+
         }
 
         }
@@ -144,7 +185,9 @@ fun StudentCard(student: Student, onClick: () -> Unit){
             .clickable(onClick = onClick)
             .padding(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(
+            containerColor = MutedTeal
+        )
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -162,9 +205,9 @@ fun StudentCard(student: Student, onClick: () -> Unit){
 fun DrawerContent(user: User?, authViewModel: AuthViewModel){
     Column(
         modifier = Modifier
-            .width(300.dp) // Set a fixed width for the drawer
-            .fillMaxHeight() // Allow it to take the full height
-            .background(MaterialTheme.colorScheme.surface) // Add a background color
+            .width(300.dp)
+            .fillMaxHeight()
+            .background(SoftTeal)
             .padding(16.dp)
             .systemBarsPadding(),
         verticalArrangement = Arrangement.SpaceBetween
@@ -177,10 +220,17 @@ fun DrawerContent(user: User?, authViewModel: AuthViewModel){
             )
             Divider()
             if (user != null) {
-                Text(text = "Name: ${user.name}")
-                Text(text = "Email: ${user.email}")
-                Text(text = "Phone: ${user.phone}")
-                Text(text = "Address: ${user.address}")
+                ProfileField(label = "Name", value = user.name)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                ProfileField(label = "Email", value = user.email)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                ProfileField(label = "Phone", value = user.phone)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                ProfileField(label = "Address", value = user.address)
+                Spacer(modifier = Modifier.height(8.dp))
             } else {
                 Text(text = "Loading...")
             }
@@ -190,9 +240,42 @@ fun DrawerContent(user: User?, authViewModel: AuthViewModel){
         }
         Button(
             onClick = { authViewModel.signout() },
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            colors = ButtonDefaults.buttonColors(containerColor = CoralRed)
         ) {
-            Text(text = "Sign Out")
+            Text(text = "Sign Out", color = Color.White, fontSize = 16.sp, modifier = Modifier.padding(8.dp))
+        }
+    }
+}
+
+@Composable
+fun ProfileField(label: String, value: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = Color.White.copy(alpha = 0.7f),
+                shape = MaterialTheme.shapes.medium
+            )
+            .border(
+                width = 1.dp,
+                color = Color.Black,
+                shape = MaterialTheme.shapes.medium
+            )
+            .padding(16.dp)
+    ) {
+        Column {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Black
+            )
         }
     }
 }

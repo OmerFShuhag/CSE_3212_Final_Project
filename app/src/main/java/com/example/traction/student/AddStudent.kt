@@ -208,7 +208,7 @@ fun AddStudent(navController: NavHostController, studentViewModel: StudentViewMo
                         modifier = Modifier
                             .size(40.dp)
                             .background(
-                                if (selectedDays.value.contains(day)) Color.Cyan else Color.Gray,
+                                if (selectedDays.value.contains(day)) DeepTeal else LightTeal,
                                 shape = RoundedCornerShape(4.dp)
                             )
                             .clickable {
@@ -218,7 +218,12 @@ fun AddStudent(navController: NavHostController, studentViewModel: StudentViewMo
                             },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(day, color = Color.White, fontSize = 12.sp)
+                        Text(day,
+                            color = if (
+                            selectedDays.value.contains(day)
+                        ) Color.White else Color.Black, fontSize = 12.sp
+                        )
+
                     }
                 }
             }

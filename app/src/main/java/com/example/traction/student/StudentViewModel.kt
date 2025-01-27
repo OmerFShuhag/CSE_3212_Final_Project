@@ -1,4 +1,6 @@
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -96,7 +98,7 @@ class StudentViewModel : ViewModel() {
         _errorMessage.value = null
     }
 
-    fun markAttendance(studentId: String) {
+    fun markAttendance(studentId: String, context: Context) {
         val attendanceDate = getCurrentDate()
 
         val studentRef = firestore.collection(userCollectionPath(userId.toString()))
@@ -105,16 +107,21 @@ class StudentViewModel : ViewModel() {
         studentRef.get().addOnSuccessListener { documentSnapshot ->
             val student = documentSnapshot.toObject<Student>()
             if (student != null) {
-                // Check if attendance for today is already marked
                 if (!student.attendance.contains(attendanceDate)) {
                     val updatedAttendance = student.attendance + attendanceDate
                     studentRef.update("attendance", updatedAttendance)
                         .addOnSuccessListener {
-                            Log.d("Attendance", "Attendance marked for ${student.name} on $attendanceDate")
+                            val message = "Attendance marked for ${student.name} on $attendanceDate"
+                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                            fetchAttendance(studentId)
                         }
                         .addOnFailureListener { exception ->
                             _errorMessage.value = "Failed to mark attendance: ${exception.message}"
                         }
+                }
+                else{
+                    val message = "Attendance already marked for ${student.name} on $attendanceDate"
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -133,7 +140,7 @@ class StudentViewModel : ViewModel() {
             val student = documentSnapshot.toObject<Student>()
             if (student != null) {
                 _selectedStudent.value = student
-                Log.d("Attendance", "Attendance for ${student.name}: ${student.attendance}")
+
             }
         }.addOnFailureListener { exception ->
             _errorMessage.value = "Failed to fetch attendance: ${exception.message}"
