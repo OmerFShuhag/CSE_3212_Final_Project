@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,7 +28,9 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -46,6 +49,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.traction.Validator
+import com.example.traction.ui.theme.DeepTeal
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,9 +71,17 @@ fun editStudent(
 
     if(student != null){
         var name by remember { mutableStateOf(student.name) }
+        var nameError by remember { mutableStateOf<String?>(null) }
+
         var address by remember { mutableStateOf(student.address) }
+        var addressError by remember { mutableStateOf<String?>(null) }
+
         var phoneNumber by remember { mutableStateOf(student.phoneNumber) }
+        var phoneNumberError by remember { mutableStateOf<String?>(null) }
+
         var salary by remember { mutableStateOf(student.salary) }
+        var salaryError by remember { mutableStateOf<String?>(null) }
+
         var selectedHour by remember { mutableStateOf(student.teachingTime.substringBefore(":")) }
         var selectedMinute by remember { mutableStateOf(student.teachingTime.substringAfter(":").substringBefore(" ")) }
         var selectedPeriod by remember { mutableStateOf(student.teachingTime.substringAfter(" ")) }
@@ -101,36 +114,112 @@ fun editStudent(
             ) {
                 OutlinedTextField(
                     value = name,
-                    onValueChange = { name = it },
+                    onValueChange = {
+                        name = it
+                        nameError = Validator.validateName(it)
+                    },
                     label = { Text("Name") },
+                    isError = nameError != null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(8.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedLabelColor = DeepTeal,
+                        unfocusedLabelColor = DeepTeal,
+                        focusedBorderColor = DeepTeal,
+                        unfocusedBorderColor = DeepTeal,
+                        focusedTextColor = DeepTeal,
+                        unfocusedTextColor = DeepTeal,
+                    )
                 )
+                nameError?.let {
+                    Text(
+                        it,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall)
+                }
                 OutlinedTextField(
                     value = address,
-                    onValueChange = { address = it },
+                    onValueChange = {
+                        address = it
+                        addressError = Validator.validateAddress(it)},
+                    isError = addressError != null,
                     label = { Text("Address") },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(8.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedLabelColor = DeepTeal,
+                        unfocusedLabelColor = DeepTeal,
+                        focusedBorderColor = DeepTeal,
+                        unfocusedBorderColor = DeepTeal,
+
+                        focusedTextColor = DeepTeal,
+                        unfocusedTextColor = DeepTeal,
+                    )
                 )
+                addressError?.let {
+                    Text(
+                        it,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall)
+                }
                 OutlinedTextField(
                     value = phoneNumber,
-                    onValueChange = { phoneNumber = it },
+                    onValueChange = { phoneNumber = it
+                        phoneNumberError = Validator.validatePhone(it)},
                     label = { Text("Phone Number") },
+                    isError = phoneNumberError != null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(8.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedLabelColor = DeepTeal,
+                        unfocusedLabelColor = DeepTeal,
+                        focusedBorderColor = DeepTeal,
+                        unfocusedBorderColor = DeepTeal,
+
+                        focusedTextColor = DeepTeal,
+                        unfocusedTextColor = DeepTeal,
+                    )
                 )
+                phoneNumberError?.let {
+                    Text(
+                        it,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall)
+                }
                 OutlinedTextField(
                     value = salary,
-                    onValueChange = { salary = it },
+                    onValueChange = { salary = it
+                        salaryError = Validator.validateSalary(it)},
                     label = { Text("Salary") },
+                    isError = salaryError != null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(8.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedLabelColor = DeepTeal,
+                        unfocusedLabelColor = DeepTeal,
+                        focusedBorderColor = DeepTeal,
+                        unfocusedBorderColor = DeepTeal,
+
+                        focusedTextColor = DeepTeal,
+                        unfocusedTextColor = DeepTeal,
+                    )
                 )
+                salaryError?.let {
+                    Text(
+                        it,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall)
+                }
+
+                Text("Select Teaching Time", fontSize = 20.sp, modifier = Modifier.padding(8.dp))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -156,6 +245,9 @@ fun editStudent(
                         onOptionSelected = { selectedPeriod = it }
                     )
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Select Teaching Days", fontSize = 20.sp, modifier = Modifier.padding(8.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -183,8 +275,12 @@ fun editStudent(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Button(onClick = { showDialog = true }) {
-                    Text("Submit")
+                Button(onClick = { showDialog = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = DeepTeal)) {
+                    Text("Submit", color = Color.White, fontSize = 16.sp)
                 }
 
                 if (showDialog) {

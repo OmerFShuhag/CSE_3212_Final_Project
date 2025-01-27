@@ -172,7 +172,8 @@ fun SIgnUpActivity(modifier: Modifier, navController: NavController, authViewMod
             // Confirm Password Field
             OutlinedTextField(
                 value = confirmPassword,
-                onValueChange = { confirmPassword = it
+                onValueChange = {
+                    confirmPassword = it
                     confirmPassError = Validator.validateConfirmPassword(it, password)
                 },
                 label = { Text("Confirm Password") },

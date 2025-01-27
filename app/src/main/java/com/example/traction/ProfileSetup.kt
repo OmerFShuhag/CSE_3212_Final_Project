@@ -39,8 +39,14 @@ fun ProfileSetup(
     navController: NavController
 ){
     var name by remember { mutableStateOf("") }
+    var nameError by remember { mutableStateOf<String?>(null) }
+
     var phone by remember { mutableStateOf("") }
+    var phoneError by remember { mutableStateOf<String?>(null) }
+
     var address by remember { mutableStateOf("") }
+    var addressError by remember { mutableStateOf<String?>(null) }
+
     val context = LocalContext.current
 
     Box(
@@ -58,13 +64,13 @@ fun ProfileSetup(
             horizontalAlignment = Alignment.CenterHorizontally
         )
         {
-            Image(
-                painter = painterResource(id = R.drawable.personal_info_yzls),
-                contentDescription = "profile setup",
-                modifier = Modifier
-                    .padding(bottom = 2.dp),
-                alignment = Alignment.Center
-            )
+//            Image(
+//                painter = painterResource(id = R.drawable.personal_info_yzls),
+//                contentDescription = "profile setup",
+//                modifier = Modifier
+//                    .padding(bottom = 2.dp),
+//                alignment = Alignment.Center
+//            )
             Text(
                 text = "Lets Set Your Profile Information",
                 style = MaterialTheme.typography.headlineSmall.copy(color = Color.Black), // White text
@@ -74,35 +80,38 @@ fun ProfileSetup(
                 value = name,
                 onValueChange = {
                     name = it
-                    //emailError = Validator.validateEmail(it)
+                    nameError = Validator.validateName(it)
                 },
                 label = { Text("Name") },
-                //isError = emailError != null,
+                isError = nameError != null,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .padding(8.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedLabelColor = DeepTeal,
                     unfocusedLabelColor = DeepTeal,
                     focusedBorderColor = DeepTeal,
                     unfocusedBorderColor = DeepTeal,
-
                     focusedTextColor = DeepTeal,
                     unfocusedTextColor = DeepTeal,
                 )
             )
+            nameError?.let {
+                Text(
+                    it,
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodySmall)
+            }
             OutlinedTextField(
                 value = phone,
-                onValueChange = {
-                    phone = it
-                    //emailError = Validator.validateEmail(it)
-                },
-                label = { Text("Mobile No.") },
-                //isError = emailError != null,
+                onValueChange = { phone = it
+                    phoneError = Validator.validatePhone(it)},
+                label = { Text("Phone Number") },
+                isError = phoneError != null,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .padding(8.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedLabelColor = DeepTeal,
@@ -114,17 +123,22 @@ fun ProfileSetup(
                     unfocusedTextColor = DeepTeal,
                 )
             )
+            phoneError?.let {
+                Text(
+                    it,
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodySmall)
+            }
             OutlinedTextField(
                 value = address,
                 onValueChange = {
                     address = it
-                    //emailError = Validator.validateEmail(it)
-                },
+                    addressError = Validator.validateAddress(it)},
+                isError = addressError != null,
                 label = { Text("Address") },
-                //isError = emailError != null,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .padding(8.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedLabelColor = DeepTeal,
@@ -136,6 +150,12 @@ fun ProfileSetup(
                     unfocusedTextColor = DeepTeal,
                 )
             )
+            addressError?.let {
+                Text(
+                    it,
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodySmall)
+            }
             Spacer(modifier = Modifier.height(24.dp))
             Button(onClick = {
             if (name.isNotEmpty() && phone.isNotEmpty() && address.isNotEmpty()) {

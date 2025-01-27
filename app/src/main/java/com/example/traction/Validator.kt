@@ -7,6 +7,8 @@ class Validator {
         //private val password_regex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{6,20}$")
         private val password_regex = Regex("^.{8,}$")
         private val name_regex = Regex("^[A-Za-z]{2,}(\\s[A-Za-z]{2,})?\$")
+        private val phone_regex = Regex("^01[346789]\\d{8}\$")
+        private val salary_regex = Regex("^[0-9]+\$")
 
         fun validateEmail(email: String): String?{
             return when{
@@ -36,6 +38,29 @@ class Validator {
             return when {
                 confirmPassword.isEmpty() -> "Confirm Password cannot be empty"
                 password != confirmPassword -> "Passwords do not match"
+                else -> null
+            }
+        }
+
+        fun validatePhone(phone: String): String? {
+            return when {
+                phone.isEmpty() -> "Phone number cannot be empty"
+                !phone_regex.matches(phone) -> "Invalid Phone number"
+                else -> null
+            }
+        }
+
+        fun validateAddress(address: String): String? {
+            return when {
+                address.isEmpty() -> "Address cannot be empty"
+                else -> null
+            }
+        }
+
+        fun validateSalary(salary: String): String? {
+            return when {
+                salary.isEmpty() -> "Salary cannot be empty"
+                !salary_regex.matches(salary) -> "Invalid Salary"
                 else -> null
             }
         }
